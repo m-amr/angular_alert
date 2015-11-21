@@ -9,6 +9,7 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
     var _infoClassName = 'info';
     var _warningClassName = 'warning';
     var _errorClassName = 'danger';
+    var _successClassName = 'success';
 
     var getAlertClassNameBasedOnEvent = function(eventName){
         switch (eventName){
@@ -18,6 +19,8 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
                 return _infoClassName;
             case alertService.getErrorEvent():
                 return _errorClassName;
+            case alertService.getSuccessEvent:
+                return _successClassName;
 
             default:
                 throw eventName+' is not defined.';
@@ -55,6 +58,12 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
 
             scope.$on(alertService.getErrorEvent(), function($event, message){
                 var _interpolatedTemplate = $interpolate(_template)(getModelData(message, alertService.getErrorEvent()));
+                var _compiledTemplate = $compile(_interpolatedTemplate)(scope);
+                element.append(_compiledTemplate)
+            });
+
+            scope.$on(alertService.getSuccessEvent(), function($event, message){
+                var _interpolatedTemplate = $interpolate(_template)(getModelData(message, alertService.getSuccessEvent()));
                 var _compiledTemplate = $compile(_interpolatedTemplate)(scope);
                 element.append(_compiledTemplate)
             });

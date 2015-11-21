@@ -1,4 +1,4 @@
-/*! angular_alert - v1.0.0 - 2015-11-15 */ 
+/*! angular_alert - v1.0.0 - 2015-11-22 */ 
 (function(){
 
 if(typeof angular === 'undefined'){
@@ -14,6 +14,7 @@ alertModule.service('alertService', ['$rootScope', function($rootScope){
     var _alertInfoEventName = _alertEventName +':info';
     var _alertWarningEventName = _alertEventName +':warning';
     var _alertErrorEventName = _alertEventName +':error';
+    var _alertSuccessEventName = _alertEventName +':success';
 
     _service.getInfoEvent = function(){
         return _alertInfoEventName;
@@ -25,6 +26,10 @@ alertModule.service('alertService', ['$rootScope', function($rootScope){
 
     _service.getErrorEvent = function(){
         return _alertErrorEventName;
+    };
+
+    _service.getSuccessEvent = function(){
+        return _alertSuccessEventName;
     };
 
     _service.info = function(message){
@@ -39,6 +44,10 @@ alertModule.service('alertService', ['$rootScope', function($rootScope){
         $rootScope.$broadcast(_service.getErrorEvent(), message);
     };
 
+    _service.success = function(message){
+        $rootScope.$broadcast(_service.getSuccessEvent(), message);
+    };
+
 }]);
 alertModule.directive('alertComponent', ['alertService', '$compile', '$interpolate',  function(alertService, $compile, $interpolate){
 
@@ -51,6 +60,7 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
     var _infoClassName = 'info';
     var _warningClassName = 'warning';
     var _errorClassName = 'danger';
+    var _successClassName = 'success';
 
     var getAlertClassNameBasedOnEvent = function(eventName){
         switch (eventName){
@@ -60,6 +70,8 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
                 return _infoClassName;
             case alertService.getErrorEvent():
                 return _errorClassName;
+            case alertService.getSuccessEvent:
+                return _successClassName;
 
             default:
                 throw eventName+' is not defined.';
@@ -97,6 +109,12 @@ alertModule.directive('alertComponent', ['alertService', '$compile', '$interpola
 
             scope.$on(alertService.getErrorEvent(), function($event, message){
                 var _interpolatedTemplate = $interpolate(_template)(getModelData(message, alertService.getErrorEvent()));
+                var _compiledTemplate = $compile(_interpolatedTemplate)(scope);
+                element.append(_compiledTemplate)
+            });
+
+            scope.$on(alertService.getSuccessEvent(), function($event, message){
+                var _interpolatedTemplate = $interpolate(_template)(getModelData(message, alertService.getSuccessEvent()));
                 var _compiledTemplate = $compile(_interpolatedTemplate)(scope);
                 element.append(_compiledTemplate)
             });
